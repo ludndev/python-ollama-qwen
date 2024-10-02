@@ -1,2 +1,2 @@
 ollama_api = 'http://localhost:11456/api/generate'
-ollama_stream = False
+ollama_stream = True
