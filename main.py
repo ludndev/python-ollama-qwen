@@ -3,19 +3,7 @@ import requests
 from config import *
 
 
-def main():
-    prompt = 'Tell me a joke about programmer'
-
-    headers = {
-        'Content-Type': 'application/json',
-    }
-
-    data = {
-        'model': 'qwen:0.5b',
-        'prompt': prompt,
-        'stream': ollama_stream,
-    }
-
+def call_llm_with_stream(data, headers):
     response = requests.post(ollama_api, data=json.dumps(data), headers=headers, stream=True)
 
     if response.status_code == 200:
@@ -33,6 +21,36 @@ def main():
         print()  # new line to separate at end of the stream
     else:
         print('Something went wrong. Error:', response.status_code, response.text)
+
+
+def call_llm_default(data, headers):
+    response = requests.post(ollama_api, data=json.dumps(data), headers=headers)
+
+    if response.status_code == 200:
+        response_data = json.loads(response.text)
+        answers = response_data['response']
+        print(answers)
+    else:
+        print('Something went wrong. Error:', response.status_code, response.text)
+
+
+def main():
+    prompt = 'write a 2000 words story'
+
+    headers = {
+        'Content-Type': 'application/json',
+    }
+
+    data = {
+        'model': ollama_model,
+        'prompt': prompt,
+        'stream': ollama_stream,
+    }
+
+    if ollama_stream:
+        call_llm_with_stream(data, headers)
+    else:
+        call_llm_default(data, headers)
 
 
 if __name__ == '__main__':
